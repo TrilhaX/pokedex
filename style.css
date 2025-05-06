@@ -1,0 +1,7 @@
+body{
+    background: linear-gradient(to bottom, #e7476f, #ffd166);
+    font-family: 'Press Start 2p', cursive;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokedex</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        header {
+            background-color: #ef5350;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        #search {
+            margin: 1rem auto;
+            display: block;
+            padding: 0.5rem;
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #pokemon-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .pokemon-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 0.5rem;
+            padding: 1rem;
+            width: 150px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .pokemon-card:hover {
+            transform: scale(1.05);
+        }
+        .pokemon-card img {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Pokedex</h1>
+    </header>
+    <input type="text" id="search" placeholder="Buscar Pokémon">
+    <div id="pokemon-list"></div>
+
+    <script>
+        const apiUrl = 'https://pokeapi.co/api/v2/pokemon?limit=151';
+        let allPokemon = [];
+
+        async function fetchPokemon() {
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                allPokemon = data.results;
+                displayPokemon(allPokemon);
+            } catch (error) {
+                console.error('Erro ao buscar Pokémon:', error);
+            }
+        }
+
+        function displayPokemon(pokemons) {
+            const list = document.getElementById('pokemon-list');
+            list.innerHTML = '';
+            pokemons.forEach(p => {
+                const id = p.url.split('/').filter(Boolean).pop();
+                const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+                const card = document.createElement('div');
+                card.classList.add('pokemon-card');
+                card.innerHTML = `
+                    <img src="${imgUrl}" alt="${p.name}">
+                    <p>#${id} ${capitalize(p.name)}</p>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        document.getElementById('search').addEventListener('input', e => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allPokemon.filter(p => p.name.includes(term));
+            displayPokemon(filtered);
+        });
+
+        fetchPokemon();
+    </script>
+</body>
+</html>
